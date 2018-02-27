@@ -15,84 +15,84 @@
    limitations under the License.
 -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@android:color/background_light">
+
     <ImageView
         android:id="@+id/screen_wait"
-        android:layout_height="wrap_content"
         android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:adjustViewBounds="false"
         android:contentDescription="@string/content_description_app_loading_image"
         android:src="@drawable/wait"
         android:visibility="gone" />
+
     <LinearLayout
         android:id="@+id/screen_main"
         android:layout_height="match_parent"
         android:layout_width="match_parent"
         android:gravity="center"
-        android:orientation="vertical"
-        android:visibility="visible">
-        <ImageView
-            android:src="@drawable/title"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:contentDescription="@string/content_description_title_image"
-            android:layout_marginBottom="10dp" />
+            android:layout_weight="0.20"
+            android:text="@string/title"
+            android:gravity="center_horizontal"
+            android:layout_gravity="center_horizontal"
+            android:textColor="@android:color/background_dark"
+            android:textSize="30sp"
+            android:textStyle="bold" />
 
-        <ImageView
-            android:id="@+id/free_or_premium"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:contentDescription="@string/content_desc_free_vs_premium_indicator"
-            android:layout_marginBottom="40dp"
-            android:src="@drawable/free" />
+        <Button
+            android:id="@+id/flower_button"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="match_parent"
+            android:layout_height="83dp"
+            android:layout_weight="0.2"
+            android:drawableLeft="@drawable/flower"
+            android:drawableStart="@drawable/flower"
+            android:onClick="onBuyFlowerButtonClicked"
+            android:text="@string/flower_button_text" />
 
-        <ImageView
-            android:id="@+id/gas_gauge"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:contentDescription="@string/content_desc_gas_gauge_indicator"
-            android:layout_marginBottom="40dp"
-            android:src="@drawable/gas4" />
+        <Button
+            android:id="@+id/flowers_button"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="match_parent"
+            android:layout_height="83dp"
+            android:layout_weight="0.2"
+            android:drawableLeft="@drawable/flowers"
+            android:drawableStart="@drawable/flowers"
+            android:onClick="onBuyFlowersButtonClicked"
+            android:text="@string/flowers_button_text" />
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="20dp">
-            <ImageView
-                android:src="@drawable/drive"
-                android:onClick="onDriveButtonClicked"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="20dp" />
+        <Button
+            android:id="@+id/bella_button"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="match_parent"
+            android:layout_height="83dp"
+            android:layout_weight="0.2"
+            android:drawableLeft="@drawable/bella_flower"
+            android:drawableStart="@drawable/bella_flower"
+            android:onClick="onBuyBellaButtonClicked"
+            android:text="@string/bella_button_text" />
 
-            <ImageView
-                android:src="@drawable/buy_gas"
-                android:onClick="onBuyGasButtonClicked"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp" />
-        </LinearLayout>
+        <Button
+            android:id="@+id/lotus_button"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="match_parent"
+            android:layout_height="83dp"
+            android:layout_weight="0.2"
+            android:drawableLeft="@drawable/lotus"
+            android:drawableStart="@drawable/lotus"
+            android:onClick="onBuyLotusButtonClicked"
+            android:text="@string/lotus_button_text" />
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="20dp">
-            <ImageView
-                android:id="@+id/upgrade_button"
-                android:src="@drawable/upgrade_app"
-                android:onClick="onUpgradeAppButtonClicked"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="20dp" />
-
-            <ImageView
-                android:id="@+id/infinite_gas_button"
-                android:onClick="onInfiniteGasButtonClicked"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
     </LinearLayout>
+
 </FrameLayout>

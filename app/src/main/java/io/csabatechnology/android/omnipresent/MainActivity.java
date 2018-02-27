@@ -22,12 +22,9 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
 
 import io.csabatechnology.android.omnipresent.util.IabBroadcastReceiver;
 import io.csabatechnology.android.omnipresent.util.IabBroadcastReceiver.IabBroadcastListener;
@@ -36,9 +33,6 @@ import io.csabatechnology.android.omnipresent.util.IabHelper.IabAsyncInProgressE
 import io.csabatechnology.android.omnipresent.util.IabResult;
 import io.csabatechnology.android.omnipresent.util.Inventory;
 import io.csabatechnology.android.omnipresent.util.Purchase;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Example game using in-app billing version 3.
@@ -53,17 +47,12 @@ import java.util.List;
 public class MainActivity extends Activity implements IabBroadcastListener,
         OnClickListener {
     // Debug tag, for logging
-    static final String TAG = "OmniPresent";
-
-    // Tracks the currently owned infinite gas SKU, and the options in the Manage dialog
-    String mInfiniteGasSku = "";
-    String mFirstChoiceSku = "";
-    String mSecondChoiceSku = "";
+    static final String TAG = "Omnipresent";
 
     // SKUs for our products
     static final String SKU_FLOWER = "flower";
     static final String SKU_FLOWERS = "flowers";
-    static final String SKU_ = "flowers";
+    static final String SKU_BELLA = "bella";
     static final String SKU_LOTUS = "lotus";
 
     // (arbitrary) request code for the purchase flow
@@ -81,9 +70,6 @@ public class MainActivity extends Activity implements IabBroadcastListener,
 
         setContentView(R.layout.activity_main);
 
-        // load game data
-        loadData();
-
         /* base64EncodedPublicKey should be YOUR APPLICATION'S PUBLIC KEY
          * (that you got from the Google Play developer console). This is not your
          * developer public key, it's the *app-specific* public key.
@@ -99,9 +85,9 @@ public class MainActivity extends Activity implements IabBroadcastListener,
 
         // Some sanity checks to see if the developer (that's you!) really followed the
         // instructions to run this sample (don't put these checks on your app!)
-        if (base64EncodedPublicKey.contains("CONSTRUCT_YOUR")) {
-            throw new RuntimeException("Please put your app's public key in MainActivity.java. See README.");
-        }
+//        if (base64EncodedPublicKey.contains("CONSTRUCT_YOUR")) {
+//            throw new RuntimeException("Please put your app's public key in MainActivity.java. See README.");
+//        }
         if (getPackageName().startsWith("com.example")) {
             throw new RuntimeException("Please change the sample's package name! See README.");
         }
@@ -173,19 +159,48 @@ public class MainActivity extends Activity implements IabBroadcastListener,
              * verifyDeveloperPayload().
              */
 
-            // Check for gas delivery -- if we own gas, we should fill up the tank immediately
-            Purchase gasPurchase = inventory.getPurchase(SKU_GAS);
-            if (gasPurchase != null && verifyDeveloperPayload(gasPurchase)) {
-                Log.d(TAG, "We have gas. Consuming it.");
+            // Check for consumable
+            Purchase flowerPurchase = inventory.getPurchase(SKU_FLOWER);
+            if (flowerPurchase != null && verifyDeveloperPayload(flowerPurchase)) {
+                Log.d(TAG, "Purchasing item, consuming it.");
                 try {
-                    mHelper.consumeAsync(inventory.getPurchase(SKU_GAS), mConsumeFinishedListener);
+                    mHelper.consumeAsync(inventory.getPurchase(SKU_FLOWER), mConsumeFinishedListener);
+                } catch (IabAsyncInProgressException e) {
+                    complain("Error consuming gas. Another async operation in progress.");
+                }
+                return;
+            }
+            Purchase flowersPurchase = inventory.getPurchase(SKU_FLOWERS);
+            if (flowersPurchase != null && verifyDeveloperPayload(flowersPurchase)) {
+                Log.d(TAG, "Purchasing item, consuming it.");
+                try {
+                    mHelper.consumeAsync(inventory.getPurchase(SKU_FLOWERS), mConsumeFinishedListener);
+                } catch (IabAsyncInProgressException e) {
+                    complain("Error consuming gas. Another async operation in progress.");
+                }
+                return;
+            }
+            Purchase bellaPurchase = inventory.getPurchase(SKU_BELLA);
+            if (flowersPurchase != null && verifyDeveloperPayload(bellaPurchase)) {
+                Log.d(TAG, "Purchasing item, consuming it.");
+                try {
+                    mHelper.consumeAsync(inventory.getPurchase(SKU_BELLA), mConsumeFinishedListener);
+                } catch (IabAsyncInProgressException e) {
+                    complain("Error consuming gas. Another async operation in progress.");
+                }
+                return;
+            }
+            Purchase lotusPurchase = inventory.getPurchase(SKU_LOTUS);
+            if (flowersPurchase != null && verifyDeveloperPayload(lotusPurchase)) {
+                Log.d(TAG, "Purchasing item, consuming it.");
+                try {
+                    mHelper.consumeAsync(inventory.getPurchase(SKU_LOTUS), mConsumeFinishedListener);
                 } catch (IabAsyncInProgressException e) {
                     complain("Error consuming gas. Another async operation in progress.");
                 }
                 return;
             }
 
-            updateUi();
             setWaitScreen(false);
             Log.d(TAG, "Initial inventory query finished; enabling main UI.");
         }
@@ -202,9 +217,9 @@ public class MainActivity extends Activity implements IabBroadcastListener,
         }
     }
 
-    // User clicked the "Buy Gas" button
-    public void onBuyGasButtonClicked(View arg0) {
-        Log.d(TAG, "Buy gas button clicked.");
+    // User clicked on one fo the consumable buttons
+    public void onBuyConsumableButtonClicked(View arg0, String sku) {
+        Log.d(TAG, "Buy " + sku + " button clicked.");
 
         // launch the gas purchase UI flow.
         // We will be notified of completion via mPurchaseFinishedListener
@@ -217,7 +232,7 @@ public class MainActivity extends Activity implements IabBroadcastListener,
         String payload = "";
 
         try {
-            mHelper.launchPurchaseFlow(this, SKU_GAS, RC_REQUEST,
+            mHelper.launchPurchaseFlow(this, sku, RC_REQUEST,
                     mPurchaseFinishedListener, payload);
         } catch (IabAsyncInProgressException e) {
             complain("Error launching purchase flow. Another async operation in progress.");
@@ -225,49 +240,30 @@ public class MainActivity extends Activity implements IabBroadcastListener,
         }
     }
 
+    public void onBuyFlowerButtonClicked(View arg0) {
+        onBuyConsumableButtonClicked(arg0, SKU_FLOWER);
+    }
+
+    public void onBuyFlowersButtonClicked(View arg0) {
+        onBuyConsumableButtonClicked(arg0, SKU_FLOWERS);
+    }
+
+    public void onBuyBellaButtonClicked(View arg0) {
+        onBuyConsumableButtonClicked(arg0, SKU_BELLA);
+    }
+
+    public void onBuyLotusButtonClicked(View arg0) {
+        onBuyConsumableButtonClicked(arg0, SKU_LOTUS);
+    }
+
     @Override
     public void onClick(DialogInterface dialog, int id) {
-        if (id == 0 /* First choice item */) {
-            mSelectedSubscriptionPeriod = mFirstChoiceSku;
-        } else if (id == 1 /* Second choice item */) {
-            mSelectedSubscriptionPeriod = mSecondChoiceSku;
-        } else if (id == DialogInterface.BUTTON_POSITIVE /* continue button */) {
+        if (id == DialogInterface.BUTTON_POSITIVE /* continue button */) {
             /* TODO: for security, generate your payload here for verification. See the comments on
              *        verifyDeveloperPayload() for more info. Since this is a SAMPLE, we just use
              *        an empty string, but on a production app you should carefully generate
              *        this. */
             String payload = "";
-
-            if (TextUtils.isEmpty(mSelectedSubscriptionPeriod)) {
-                // The user has not changed from the default selection
-                mSelectedSubscriptionPeriod = mFirstChoiceSku;
-            }
-
-            List<String> oldSkus = null;
-            if (!TextUtils.isEmpty(mInfiniteGasSku)
-                    && !mInfiniteGasSku.equals(mSelectedSubscriptionPeriod)) {
-                // The user currently has a valid subscription, any purchase action is going to
-                // replace that subscription
-                oldSkus = new ArrayList<String>();
-                oldSkus.add(mInfiniteGasSku);
-            }
-
-            setWaitScreen(true);
-            Log.d(TAG, "Launching purchase flow for gas subscription.");
-            try {
-                mHelper.launchPurchaseFlow(this, mSelectedSubscriptionPeriod, IabHelper.ITEM_TYPE_SUBS,
-                        oldSkus, RC_REQUEST, mPurchaseFinishedListener, payload);
-            } catch (IabAsyncInProgressException e) {
-                complain("Error launching purchase flow. Another async operation in progress.");
-                setWaitScreen(false);
-            }
-            // Reset the dialog options
-            mSelectedSubscriptionPeriod = "";
-            mFirstChoiceSku = "";
-            mSecondChoiceSku = "";
-        } else if (id != DialogInterface.BUTTON_NEGATIVE) {
-            // There are only four buttons, this should not happen
-            Log.e(TAG, "Unknown button clicked in subscription dialog: " + id);
         }
     }
 
@@ -339,18 +335,17 @@ public class MainActivity extends Activity implements IabBroadcastListener,
 
             Log.d(TAG, "Purchase successful.");
 
-            if (purchase.getSku().equals(SKU_GAS)) {
-                // bought 1/4 tank of gas. So consume it.
+            if (purchase.getSku().equals(SKU_FLOWER) ||
+                    purchase.getSku().equals(SKU_FLOWERS) ||
+                    purchase.getSku().equals(SKU_BELLA) ||
+                    purchase.getSku().equals(SKU_LOTUS)) {
                 Log.d(TAG, "Purchase is gas. Starting gas consumption.");
                 try {
                     mHelper.consumeAsync(purchase, mConsumeFinishedListener);
                 } catch (IabAsyncInProgressException e) {
                     complain("Error consuming gas. Another async operation in progress.");
                     setWaitScreen(false);
-                    return;
                 }
-            }
-            else if (purchase.getSku().equals(SKU_PREMIUM)) {
             }
         }
     };
@@ -370,15 +365,14 @@ public class MainActivity extends Activity implements IabBroadcastListener,
                 // successfully consumed, so we apply the effects of the item in our
                 // game world's logic, which in our case means filling the gas tank a bit
                 Log.d(TAG, "Consumption successful. Provisioning.");
-                mTank = mTank == TANK_MAX ? TANK_MAX : mTank + 1;
-                saveData();
-                alert("You filled 1/4 tank. Your tank is now " + String.valueOf(mTank) + "/4 full!");
             }
             else {
                 complain("Error while consuming: " + result);
             }
-            updateUi();
+
+            // TODO: play music here depending on the consumed resource
             setWaitScreen(false);
+            alert("Namaste! Thanks for your support!");
             Log.d(TAG, "End consumption flow.");
         }
     };
@@ -401,33 +395,6 @@ public class MainActivity extends Activity implements IabBroadcastListener,
         }
     }
 
-    // updates UI to reflect model
-    public void updateUi() {
-        // update the car color to reflect premium status or lack thereof
-        ((ImageView)findViewById(R.id.free_or_premium)).setImageResource(mIsPremium ? R.drawable.premium : R.drawable.free);
-
-        // "Upgrade" button is only visible if the user is not premium
-        findViewById(R.id.upgrade_button).setVisibility(mIsPremium ? View.GONE : View.VISIBLE);
-
-        ImageView infiniteGasButton = (ImageView) findViewById(R.id.infinite_gas_button);
-        if (mSubscribedToInfiniteGas) {
-            // If subscription is active, show "Manage Infinite Gas"
-            infiniteGasButton.setImageResource(R.drawable.manage_infinite_gas);
-        } else {
-            // The user does not have infinite gas, show "Get Infinite Gas"
-            infiniteGasButton.setImageResource(R.drawable.get_infinite_gas);
-        }
-
-        // update gas gauge to reflect tank status
-        if (mSubscribedToInfiniteGas) {
-            ((ImageView)findViewById(R.id.gas_gauge)).setImageResource(R.drawable.gas_inf);
-        }
-        else {
-            int index = mTank >= TANK_RES_IDS.length ? TANK_RES_IDS.length - 1 : mTank;
-            ((ImageView)findViewById(R.id.gas_gauge)).setImageResource(TANK_RES_IDS[index]);
-        }
-    }
-
     // Enables or disables the "please wait" screen.
     void setWaitScreen(boolean set) {
         findViewById(R.id.screen_main).setVisibility(set ? View.GONE : View.VISIBLE);
@@ -445,25 +412,5 @@ public class MainActivity extends Activity implements IabBroadcastListener,
         bld.setNeutralButton("OK", null);
         Log.d(TAG, "Showing alert dialog: " + message);
         bld.create().show();
-    }
-
-    void saveData() {
-
-        /*
-         * WARNING: on a real application, we recommend you save data in a secure way to
-         * prevent tampering. For simplicity in this sample, we simply store the data using a
-         * SharedPreferences.
-         */
-
-        SharedPreferences.Editor spe = getPreferences(MODE_PRIVATE).edit();
-        spe.putInt("tank", mTank);
-        spe.apply();
-        Log.d(TAG, "Saved data: tank = " + String.valueOf(mTank));
-    }
-
-    void loadData() {
-        SharedPreferences sp = getPreferences(MODE_PRIVATE);
-        mTank = sp.getInt("tank", 2);
-        Log.d(TAG, "Loaded data: tank = " + String.valueOf(mTank));
     }
 }

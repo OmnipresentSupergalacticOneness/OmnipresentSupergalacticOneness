@@ -26,8 +26,7 @@
                  android:theme="@style/AppTheme">
         <activity
                 android:name="io.csabatechnology.android.omnipresent.MainActivity"
-                android:label="@string/title_activity_main"
-                android:screenOrientation="portrait">
+                android:label="@string/title_activity_main">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
