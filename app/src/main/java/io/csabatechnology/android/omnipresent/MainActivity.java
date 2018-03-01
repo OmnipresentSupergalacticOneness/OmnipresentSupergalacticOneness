@@ -35,14 +35,7 @@ import io.csabatechnology.android.omnipresent.util.Inventory;
 import io.csabatechnology.android.omnipresent.util.Purchase;
 
 /**
- * Example game using in-app billing version 3.
- *
- * Another important point to notice is that it may so happen that
- * the application crashed (or anything else happened) after the user
- * purchased the "gas" item, but before it was consumed. That's why,
- * on startup, we check if we own the "gas" item, and, if so,
- * we have to apply its effects to our world and consume it. This
- * is also very important!
+ * Example using in-app billing version 3.
  */
 public class MainActivity extends Activity implements IabBroadcastListener,
         OnClickListener {
@@ -81,16 +74,7 @@ public class MainActivity extends Activity implements IabBroadcastListener,
          * want to make it easy for an attacker to replace the public key with one
          * of their own and then fake messages from the server.
          */
-        String base64EncodedPublicKey = "CONSTRUCT_YOUR_KEY_AND_PLACE_IT_HERE";
-
-        // Some sanity checks to see if the developer (that's you!) really followed the
-        // instructions to run this sample (don't put these checks on your app!)
-//        if (base64EncodedPublicKey.contains("CONSTRUCT_YOUR")) {
-//            throw new RuntimeException("Please put your app's public key in MainActivity.java. See README.");
-//        }
-        if (getPackageName().startsWith("com.example")) {
-            throw new RuntimeException("Please change the sample's package name! See README.");
-        }
+        String base64EncodedPublicKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAogzHemIz260HRYY3C0/c1ZhA+TvbhgflXU8P5BBYvkncijH3/R9ukRghYvZKF/1XohkfZa7RL7lNN2iFRg/MpdufbMOeSfQoB/nTkqsFOMNBLkGNFrw8KIo8Dk885UqxeHVYAKz+i4bX+Fk1+KRlFB+DDHIPN6GWrIbuP54XKAjHWV1jzMJudk9lm+pTAOuUjnqrOpxw5IdMgs34v2qyzrYhjotrbEQCOcJMPMCbmeS2mbvD8Kv4V/IKOuzzyHuu6BPv9pQeft7ypp3QmendNO9WPNOxSddEP0Q+KtYnIA8ACET7PtMHRhPID7yj5BxX3RXaVdVUTPX4Ef8BA+0K2wIDAQAB";
 
         // Create the helper, passing it our context and the public key to verify signatures with
         Log.d(TAG, "Creating IAB helper.");
@@ -162,41 +146,49 @@ public class MainActivity extends Activity implements IabBroadcastListener,
             // Check for consumable
             Purchase flowerPurchase = inventory.getPurchase(SKU_FLOWER);
             if (flowerPurchase != null && verifyDeveloperPayload(flowerPurchase)) {
-                Log.d(TAG, "Purchasing item, consuming it.");
+                Log.d(TAG, "Purchasing " + SKU_FLOWER + ", consuming it.");
                 try {
-                    mHelper.consumeAsync(inventory.getPurchase(SKU_FLOWER), mConsumeFinishedListener);
+                    mHelper.consumeAsync(inventory.getPurchase(SKU_FLOWER),
+                            mConsumeFinishedListener);
                 } catch (IabAsyncInProgressException e) {
-                    complain("Error consuming gas. Another async operation in progress.");
+                    complain("Error consuming " + SKU_FLOWER +
+                            ". Another async operation in progress.");
                 }
                 return;
             }
             Purchase flowersPurchase = inventory.getPurchase(SKU_FLOWERS);
             if (flowersPurchase != null && verifyDeveloperPayload(flowersPurchase)) {
-                Log.d(TAG, "Purchasing item, consuming it.");
+                Log.d(TAG, "Purchasing " + SKU_FLOWERS + ", consuming it.");
                 try {
-                    mHelper.consumeAsync(inventory.getPurchase(SKU_FLOWERS), mConsumeFinishedListener);
+                    mHelper.consumeAsync(inventory.getPurchase(SKU_FLOWERS),
+                            mConsumeFinishedListener);
                 } catch (IabAsyncInProgressException e) {
-                    complain("Error consuming gas. Another async operation in progress.");
+                    complain("Error consuming " + SKU_FLOWERS +
+                            ". Another async operation in progress.");
                 }
                 return;
             }
             Purchase bellaPurchase = inventory.getPurchase(SKU_BELLA);
             if (flowersPurchase != null && verifyDeveloperPayload(bellaPurchase)) {
-                Log.d(TAG, "Purchasing item, consuming it.");
+                Log.d(TAG, "Purchasing " + SKU_BELLA + ", consuming it.");
                 try {
-                    mHelper.consumeAsync(inventory.getPurchase(SKU_BELLA), mConsumeFinishedListener);
+                    mHelper.consumeAsync(inventory.getPurchase(SKU_BELLA),
+                            mConsumeFinishedListener);
                 } catch (IabAsyncInProgressException e) {
-                    complain("Error consuming gas. Another async operation in progress.");
+                    complain("Error consuming " + SKU_BELLA +
+                            ". Another async operation in progress.");
                 }
                 return;
             }
             Purchase lotusPurchase = inventory.getPurchase(SKU_LOTUS);
             if (flowersPurchase != null && verifyDeveloperPayload(lotusPurchase)) {
-                Log.d(TAG, "Purchasing item, consuming it.");
+                Log.d(TAG, "Purchasing " + SKU_LOTUS + ", consuming it.");
                 try {
-                    mHelper.consumeAsync(inventory.getPurchase(SKU_LOTUS), mConsumeFinishedListener);
+                    mHelper.consumeAsync(inventory.getPurchase(SKU_LOTUS),
+                            mConsumeFinishedListener);
                 } catch (IabAsyncInProgressException e) {
-                    complain("Error consuming gas. Another async operation in progress.");
+                    complain("Error consuming " + SKU_LOTUS +
+                            ". Another async operation in progress.");
                 }
                 return;
             }
@@ -221,10 +213,10 @@ public class MainActivity extends Activity implements IabBroadcastListener,
     public void onBuyConsumableButtonClicked(View arg0, String sku) {
         Log.d(TAG, "Buy " + sku + " button clicked.");
 
-        // launch the gas purchase UI flow.
+        // launch the purchase UI flow.
         // We will be notified of completion via mPurchaseFinishedListener
         setWaitScreen(true);
-        Log.d(TAG, "Launching purchase flow for gas.");
+        Log.d(TAG, "Launching purchase flow for consumable.");
 
         /* TODO: for security, generate your payload here for verification. See the comments on
          *        verifyDeveloperPayload() for more info. Since this is a SAMPLE, we just use
@@ -254,6 +246,10 @@ public class MainActivity extends Activity implements IabBroadcastListener,
 
     public void onBuyLotusButtonClicked(View arg0) {
         onBuyConsumableButtonClicked(arg0, SKU_LOTUS);
+    }
+
+    public void onAttributionsButtonClicked(View arg0) {
+        alert(getString(R.string.attributions_text));
     }
 
     @Override
@@ -335,17 +331,13 @@ public class MainActivity extends Activity implements IabBroadcastListener,
 
             Log.d(TAG, "Purchase successful.");
 
-            if (purchase.getSku().equals(SKU_FLOWER) ||
-                    purchase.getSku().equals(SKU_FLOWERS) ||
-                    purchase.getSku().equals(SKU_BELLA) ||
-                    purchase.getSku().equals(SKU_LOTUS)) {
-                Log.d(TAG, "Purchase is gas. Starting gas consumption.");
-                try {
-                    mHelper.consumeAsync(purchase, mConsumeFinishedListener);
-                } catch (IabAsyncInProgressException e) {
-                    complain("Error consuming gas. Another async operation in progress.");
-                    setWaitScreen(false);
-                }
+            String sku = purchase.getSku();
+            Log.d(TAG, "Purchase is " + sku + ". Starting " + sku + " consumption.");
+            try {
+                mHelper.consumeAsync(purchase, mConsumeFinishedListener);
+            } catch (IabAsyncInProgressException e) {
+                complain("Error consuming " + sku + ". Another async operation in progress.");
+                setWaitScreen(false);
             }
         }
     };
@@ -358,21 +350,18 @@ public class MainActivity extends Activity implements IabBroadcastListener,
             // if we were disposed of in the meantime, quit.
             if (mHelper == null) return;
 
-            // We know this is the "gas" sku because it's the only one we consume,
-            // so we don't check which sku was consumed. If you have more than one
-            // sku, you probably should check...
             if (result.isSuccess()) {
-                // successfully consumed, so we apply the effects of the item in our
-                // game world's logic, which in our case means filling the gas tank a bit
+                // successfully consumed, so we apply the effects
                 Log.d(TAG, "Consumption successful. Provisioning.");
+                String sku = purchase.getSku();
+                // TODO: play music here depending on the consumed resource
             }
             else {
                 complain("Error while consuming: " + result);
             }
 
-            // TODO: play music here depending on the consumed resource
             setWaitScreen(false);
-            alert("Namaste! Thanks for your support!");
+            alert("Namaste! Thank You for your support!");  // TODO
             Log.d(TAG, "End consumption flow.");
         }
     };
@@ -402,7 +391,7 @@ public class MainActivity extends Activity implements IabBroadcastListener,
     }
 
     void complain(String message) {
-        Log.e(TAG, "**** TrivialDrive Error: " + message);
+        Log.e(TAG, "**** Omnipresent Error: " + message);
         alert("Error: " + message);
     }
 

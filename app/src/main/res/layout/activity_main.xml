@@ -93,6 +93,15 @@
             android:onClick="onBuyLotusButtonClicked"
             android:text="@string/lotus_button_text" />
 
+        <Button
+            android:id="@+id/attribution_button"
+            style="@style/Widget.AppCompat.Button.ButtonBar.AlertDialog"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.20"
+            android:onClick="onAttributionsButtonClicked"
+            android:text="@string/attribution_button_text" />
+
     </LinearLayout>
 
 </FrameLayout>

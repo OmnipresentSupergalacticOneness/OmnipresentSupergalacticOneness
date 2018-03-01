@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 -->
+
 <resources>
     <string name="app_name">Omnipresent Supergalactic Oneness</string>
     <string name="menu_settings">Settings</string>
@@ -25,4 +26,6 @@
     <string name="flowers_button_text">Flowers\n(3 gongs)</string>
     <string name="bella_button_text">Bella\n(5 gongs)</string>
     <string name="lotus_button_text">Lotus\n(7 gongs)</string>
+    <string name="attribution_button_text">Attributions</string>
+    <string name="attributions_text">Attributions:\nIcons designed by Freepik from Flaticon\n</string>
 </resources>
