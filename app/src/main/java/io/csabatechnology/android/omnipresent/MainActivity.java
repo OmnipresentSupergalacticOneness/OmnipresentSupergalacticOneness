@@ -324,8 +324,16 @@ public class MainActivity extends Activity implements IabBroadcastListener,
             if (result.isSuccess()) {
                 // successfully consumed, so we apply the effects
                 Log.d(TAG, "Consumption successful. Provisioning.");
-                String sku = purchase.getSku();
                 // TODO: play music here depending on the consumed resource
+                int rid = 0;
+                switch(purchase.getSku()) {
+                    case SKU_HAND: rid = R.raw.ommm; break;
+                    case SKU_FLOWER: rid = R.raw.gong_soft; break;
+                    case SKU_FLOWERS: rid = R.raw.gong_hits_soft; break;
+                    case SKU_BELLA: rid = R.raw.loud_gong; break;
+                    case SKU_LOTUS: rid = R.raw.golden_temple; break;
+                }
+                new AudioPlayer().play(getBaseContext(), rid);
             }
             else {
                 complain("Error while consuming: " + result);
