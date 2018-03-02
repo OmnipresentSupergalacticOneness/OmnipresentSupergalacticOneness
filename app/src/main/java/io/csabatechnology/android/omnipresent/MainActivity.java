@@ -43,6 +43,7 @@ public class MainActivity extends Activity implements IabBroadcastListener,
     static final String TAG = "Omnipresent";
 
     // SKUs for our products
+    static final String SKU_HAND = "hand";
     static final String SKU_FLOWER = "flower";
     static final String SKU_FLOWERS = "flowers";
     static final String SKU_BELLA = "bella";
@@ -74,11 +75,12 @@ public class MainActivity extends Activity implements IabBroadcastListener,
          * want to make it easy for an attacker to replace the public key with one
          * of their own and then fake messages from the server.
          */
-        String base64EncodedPublicKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAogzHemIz260HRYY3C0/c1ZhA+TvbhgflXU8P5BBYvkncijH3/R9ukRghYvZKF/1XohkfZa7RL7lNN2iFRg/MpdufbMOeSfQoB/nTkqsFOMNBLkGNFrw8KIo8Dk885UqxeHVYAKz+i4bX+Fk1+KRlFB+DDHIPN6GWrIbuP54XKAjHWV1jzMJudk9lm+pTAOuUjnqrOpxw5IdMgs34v2qyzrYhjotrbEQCOcJMPMCbmeS2mbvD8Kv4V/IKOuzzyHuu6BPv9pQeft7ypp3QmendNO9WPNOxSddEP0Q+KtYnIA8ACET7PtMHRhPID7yj5BxX3RXaVdVUTPX4Ef8BA+0K2wIDAQAB";
+        String base64EncodedPublicKey = "BAQADIw2K0+AB8fE4XPTUVdVaXR3XxB5jy7DIPhRHMtP7TECA8AInYtK+Q0PEddSxONPW9ONdnemQ3ppy7tfeQp9vPB6uuHyzzuOKI/V4vK8Dvbm2SembCMPMJcOCQEbrtojhYrzyq2v43sgMdI5wxpOrqnjUuOATp+ml9kduJMzj1VWHjAKX45PubIrWG6NPIHDD+BFlRK+1kF+Xb4i+zKAYVHexqU588kD8oIK8wrFNGkLBNMOFsqkTn/BoQfSeOMbfudpM/gRFi2NNl7LR7aZfkhoX1/FKZvYhgRku9R/3HjicnkvYBB5P8UXlfghbvT+AhZ1c/0C3YYRH062zImeHzgoAEQACKgCBIIMA8QACOAAFEQAB0w9GikhqkgBNAjIBIIM";
+        String parameter = new StringBuffer(base64EncodedPublicKey).reverse().toString();
 
         // Create the helper, passing it our context and the public key to verify signatures with
         Log.d(TAG, "Creating IAB helper.");
-        mHelper = new IabHelper(this, base64EncodedPublicKey);
+        mHelper = new IabHelper(this, parameter);
 
         // enable debug logging (for a production application, you should set this to false).
         mHelper.enableDebugLogging(true);
@@ -143,54 +145,19 @@ public class MainActivity extends Activity implements IabBroadcastListener,
              * verifyDeveloperPayload().
              */
 
-            // Check for consumable
-            Purchase flowerPurchase = inventory.getPurchase(SKU_FLOWER);
-            if (flowerPurchase != null && verifyDeveloperPayload(flowerPurchase)) {
-                Log.d(TAG, "Purchasing " + SKU_FLOWER + ", consuming it.");
-                try {
-                    mHelper.consumeAsync(inventory.getPurchase(SKU_FLOWER),
-                            mConsumeFinishedListener);
-                } catch (IabAsyncInProgressException e) {
-                    complain("Error consuming " + SKU_FLOWER +
-                            ". Another async operation in progress.");
+            String[] skus = {SKU_HAND, SKU_FLOWER, SKU_FLOWERS, SKU_BELLA, SKU_LOTUS};
+            for (String sku: skus) {
+                Purchase consumablePurchase = inventory.getPurchase(sku);
+                if (consumablePurchase != null && verifyDeveloperPayload(consumablePurchase)) {
+                    Log.d(TAG, "Purchasing " + sku + ", consuming it.");
+                    try {
+                        mHelper.consumeAsync(inventory.getPurchase(sku),
+                                mConsumeFinishedListener);
+                    } catch (IabAsyncInProgressException e) {
+                        complain("Error consuming " + sku +
+                                ". Another async operation in progress.");
+                    }
                 }
-                return;
-            }
-            Purchase flowersPurchase = inventory.getPurchase(SKU_FLOWERS);
-            if (flowersPurchase != null && verifyDeveloperPayload(flowersPurchase)) {
-                Log.d(TAG, "Purchasing " + SKU_FLOWERS + ", consuming it.");
-                try {
-                    mHelper.consumeAsync(inventory.getPurchase(SKU_FLOWERS),
-                            mConsumeFinishedListener);
-                } catch (IabAsyncInProgressException e) {
-                    complain("Error consuming " + SKU_FLOWERS +
-                            ". Another async operation in progress.");
-                }
-                return;
-            }
-            Purchase bellaPurchase = inventory.getPurchase(SKU_BELLA);
-            if (flowersPurchase != null && verifyDeveloperPayload(bellaPurchase)) {
-                Log.d(TAG, "Purchasing " + SKU_BELLA + ", consuming it.");
-                try {
-                    mHelper.consumeAsync(inventory.getPurchase(SKU_BELLA),
-                            mConsumeFinishedListener);
-                } catch (IabAsyncInProgressException e) {
-                    complain("Error consuming " + SKU_BELLA +
-                            ". Another async operation in progress.");
-                }
-                return;
-            }
-            Purchase lotusPurchase = inventory.getPurchase(SKU_LOTUS);
-            if (flowersPurchase != null && verifyDeveloperPayload(lotusPurchase)) {
-                Log.d(TAG, "Purchasing " + SKU_LOTUS + ", consuming it.");
-                try {
-                    mHelper.consumeAsync(inventory.getPurchase(SKU_LOTUS),
-                            mConsumeFinishedListener);
-                } catch (IabAsyncInProgressException e) {
-                    complain("Error consuming " + SKU_LOTUS +
-                            ". Another async operation in progress.");
-                }
-                return;
             }
 
             setWaitScreen(false);
@@ -230,6 +197,10 @@ public class MainActivity extends Activity implements IabBroadcastListener,
             complain("Error launching purchase flow. Another async operation in progress.");
             setWaitScreen(false);
         }
+    }
+
+    public void onBuyHandButtonClicked(View arg0) {
+        onBuyConsumableButtonClicked(arg0, SKU_HAND);
     }
 
     public void onBuyFlowerButtonClicked(View arg0) {

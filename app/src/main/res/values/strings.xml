@@ -22,10 +22,11 @@
     <string name="content_description_app_loading_image">App loading image</string>
 
     <string name="title">Donate for Omnipresent Supergalactic Oneness</string>
-    <string name="flower_button_text">Flower\n(1 gong)</string>
+    <string name="hand_button_text">Hand\n(Ommm!!!)</string>
+    <string name="flower_button_text">Flower\n(Gong)</string>
     <string name="flowers_button_text">Flowers\n(3 gongs)</string>
     <string name="bella_button_text">Bella\n(5 gongs)</string>
     <string name="lotus_button_text">Lotus\n(7 gongs)</string>
     <string name="attribution_button_text">Attributions</string>
-    <string name="attributions_text">Attributions:\nIcons designed by Freepik from Flaticon\n</string>
+    <string name="attributions_text">Attributions:\nIcons designed by Freepik from Flaticon\nSound samples all from freesound.org by:\n* Ommmm: jagadamba\n* Buddhist Golden Temple: veridiansunrise\n* Gongs: speedygonzo, boss-music, vrodge</string>
 </resources>
