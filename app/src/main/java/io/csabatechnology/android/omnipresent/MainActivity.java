@@ -324,7 +324,7 @@ public class MainActivity extends Activity implements IabBroadcastListener,
             if (result.isSuccess()) {
                 // successfully consumed, so we apply the effects
                 Log.d(TAG, "Consumption successful. Provisioning.");
-                // TODO: play music here depending on the consumed resource
+                // Playing music depending on the consumed resource
                 int rid = 0;
                 switch(purchase.getSku()) {
                     case SKU_HAND: rid = R.raw.ommm; break;
